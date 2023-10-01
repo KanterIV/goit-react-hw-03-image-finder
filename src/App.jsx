@@ -5,6 +5,8 @@ import Loader from 'components/Loader/Loader';
 import { Modal } from 'components/Modal/Modal';
 import Searchbar from 'components/Searchbar/Searchbar';
 import { searchService } from 'components/services/api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class App extends Component {
   state = {
@@ -13,6 +15,7 @@ export class App extends Component {
     error: null,
     searchValue: null,
     currentPage: 1,
+    loadMore: false,
     modal: {
       isOpen: false,
       data: null,
@@ -40,11 +43,38 @@ export class App extends Component {
       );
       const pictureСards = data.hits;
 
+      if (pictureСards.length === 0) {
+        this.setState({
+          loadMore: false,
+          error: toast.warning(
+            `Sorry, there are no images matching your search query. Please try again.`,
+            {
+              theme: 'dark',
+            }
+          ),
+        });
+        return;
+      }
       this.setState(prevState => ({
         pictureСards: [...prevState.pictureСards, ...pictureСards],
+        loadMore: this.state.currentPage < Math.ceil(data.totalHits / 12),
       }));
+      if (this.state.currentPage === Math.ceil(data.totalHits / 12)) {
+        this.setState({
+          error: toast.info(
+            "We're sorry, but you've reached the end of search results.",
+            {
+              theme: 'dark',
+            }
+          ),
+        });
+      }
     } catch (error) {
-      this.setState({ error: error.message });
+      this.setState({
+        error: toast.error('Sorry, something went wrong. Try again!', {
+          theme: 'colored',
+        }),
+      });
     } finally {
       this.setState({ isLoading: false });
     }
@@ -90,14 +120,15 @@ export class App extends Component {
         <ImageGallery
           imagesArr={this.state.pictureСards}
           onOpenModal={this.onOpenModal}
-        ></ImageGallery>
-        <Button onClick={this.loadMoreImages}></Button>
-        {this.state.isLoading && <Loader></Loader>}
+        />
+        {this.state.loadMore && <Button onClick={this.loadMoreImages} />}
+        {this.state.error && <ToastContainer />}
+        {this.state.isLoading && <Loader />}
         {this.state.modal.isOpen && (
           <Modal
             onCloseModal={this.onCloseModal}
             data={this.state.modal.data}
-          ></Modal>
+          />
         )}
       </>
     );
