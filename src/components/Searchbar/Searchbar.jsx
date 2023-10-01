@@ -7,7 +7,7 @@ export default class Searchbar extends Component {
   render() {
     return (
       <header className={css.Searchbar}>
-        <form className={css.SearchForm}>
+        <form className={css.SearchForm} onSubmit={this.props.onSubmit}>
           <button type="submit" className={css.SearchFormButton}>
             <IconContext.Provider value={{ size: 23 }}>
               <AiOutlineSearch />
@@ -16,6 +16,7 @@ export default class Searchbar extends Component {
           <input
             className={css.SearchFormInput}
             type="text"
+            name="searchFormInput"
             // autocomplete="off"
             // autofocus
             placeholder="Search images and photos"
