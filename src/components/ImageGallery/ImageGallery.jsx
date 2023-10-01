@@ -17,6 +17,7 @@ export default class ImageGallery extends Component {
                 id={id}
                 webformatURL={webformatURL}
                 largeImageURL={largeImageURL}
+                onImageItemClick={this.props.onOpenModal}
               />
             );
           })}

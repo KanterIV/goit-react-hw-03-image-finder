@@ -1,31 +1,23 @@
+import React, { Component } from 'react';
 import Button from 'components/Button/Button';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Loader from 'components/Loader/Loader';
-// import Modal from 'components/Modal/Modal';
+import { Modal } from 'components/Modal/Modal';
 import Searchbar from 'components/Searchbar/Searchbar';
 import { searchService } from 'components/services/api';
-import React, { Component } from 'react';
 
 export class App extends Component {
   state = {
-    pictureСards: null,
+    pictureСards: [],
     isLoading: false,
     error: null,
     searchValue: null,
     currentPage: 1,
+    modal: {
+      isOpen: false,
+      data: null,
+    },
   };
-
-  render() {
-    return (
-      <>
-        <Searchbar onSubmit={this.handleSearchSubmit} />
-        <ImageGallery imagesArr={this.state.pictureСards}></ImageGallery>
-        <Button></Button>
-        <Loader></Loader>
-        {/* <Modal></Modal> */}
-      </>
-    );
-  }
 
   handleSearchSubmit = event => {
     event.preventDefault();
@@ -48,7 +40,9 @@ export class App extends Component {
       );
       const pictureСards = data.hits;
 
-      this.setState({ pictureСards: pictureСards });
+      this.setState(prevState => ({
+        pictureСards: [...prevState.pictureСards, ...pictureСards],
+      }));
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
@@ -63,5 +57,49 @@ export class App extends Component {
     ) {
       this.fetchPicturesOnRequest();
     }
+  }
+
+  onOpenModal = modalData => {
+    this.setState({
+      modal: {
+        isOpen: true,
+        data: modalData,
+      },
+    });
+  };
+
+  onCloseModal = () => {
+    this.setState({
+      modal: {
+        isOpen: false,
+        data: null,
+      },
+    });
+  };
+
+  loadMoreImages = () => {
+    this.setState(prevState => {
+      return { currentPage: prevState.currentPage + 1 };
+    });
+  };
+
+  render() {
+    return (
+      <>
+        <Searchbar onSubmit={this.handleSearchSubmit} />
+        <ImageGallery
+          imagesArr={this.state.pictureСards}
+          onOpenModal={this.onOpenModal}
+        ></ImageGallery>
+        <Button onClick={this.loadMoreImages}></Button>
+        {this.state.isLoading && <Loader></Loader>}
+        {this.state.modal.isOpen && (
+          <Modal
+            onCloseModal={this.onCloseModal}
+            data={this.state.modal.data}
+          ></Modal>
+        )}
+      </>
+    );
   }
 }
