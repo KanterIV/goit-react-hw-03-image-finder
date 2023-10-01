@@ -1,8 +1,26 @@
 import React, { Component } from 'react';
 import css from './ImageGallery.module.css';
+import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 
 export default class ImageGallery extends Component {
   render() {
-    return <ul className={css.ImageGallery}></ul>;
+    const cardsArr = this.props.imagesArr;
+    console.log(cardsArr);
+    return (
+      <ul className={css.ImageGallery}>
+        {cardsArr &&
+          cardsArr.map(card => {
+            const { id, webformatURL, largeImageURL } = card;
+            return (
+              <ImageGalleryItem
+                key={id}
+                id={id}
+                webformatURL={webformatURL}
+                largeImageURL={largeImageURL}
+              />
+            );
+          })}
+      </ul>
+    );
   }
 }
