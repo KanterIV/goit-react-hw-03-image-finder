@@ -26,6 +26,18 @@ export class App extends Component {
     event.preventDefault();
 
     const searchValue = event.currentTarget.elements.searchFormInput.value;
+    if (searchValue.trim() === '') {
+      this.setState({
+        error: toast.warning(
+          `Sorry, the query can't be empty, enter some value.`,
+          {
+            theme: 'dark',
+          }
+        ),
+      });
+      event.currentTarget.reset();
+      return;
+    }
     this.setState({
       searchValue: searchValue,
       pictureСards: [],
