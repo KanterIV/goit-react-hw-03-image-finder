@@ -24,11 +24,12 @@ export class App extends Component {
 
   handleSearchSubmit = event => {
     event.preventDefault();
-    console.log(event.currentTarget.elements.searchFormInput.value);
 
     const searchValue = event.currentTarget.elements.searchFormInput.value;
     this.setState({
       searchValue: searchValue,
+      pictureСards: [],
+      currentPage: 1,
     });
 
     event.currentTarget.reset();
@@ -114,22 +115,16 @@ export class App extends Component {
   };
 
   render() {
+    const { pictureСards, loadMore, error, isLoading } = this.state;
+    const { isOpen, data } = this.state.modal;
     return (
       <>
         <Searchbar onSubmit={this.handleSearchSubmit} />
-        <ImageGallery
-          imagesArr={this.state.pictureСards}
-          onOpenModal={this.onOpenModal}
-        />
-        {this.state.loadMore && <Button onClick={this.loadMoreImages} />}
-        {this.state.error && <ToastContainer />}
-        {this.state.isLoading && <Loader />}
-        {this.state.modal.isOpen && (
-          <Modal
-            onCloseModal={this.onCloseModal}
-            data={this.state.modal.data}
-          />
-        )}
+        <ImageGallery imagesArr={pictureСards} onOpenModal={this.onOpenModal} />
+        {loadMore && <Button onClick={this.loadMoreImages} />}
+        {error && <ToastContainer />}
+        {isLoading && <Loader />}
+        {isOpen && <Modal onCloseModal={this.onCloseModal} data={data} />}
       </>
     );
   }

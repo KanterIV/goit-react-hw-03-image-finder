@@ -5,7 +5,6 @@ import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 export default class ImageGallery extends Component {
   render() {
     const cardsArr = this.props.imagesArr;
-    console.log(cardsArr);
     return (
       <ul className={css.ImageGallery}>
         {cardsArr &&
